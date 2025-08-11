@@ -34,8 +34,8 @@ app.get('/api/v1/makeRoom',(req: Request, res: Response): void =>{
 })
 
 
-
-const wss = new WebSocketServer({port:8080});
+const server = app.listen(3000);
+const wss = new WebSocketServer({server});
 
 const verifyCredentials = (id: string|null, code: string|null): boolean =>{
     if(!id || !code) return false;
@@ -91,5 +91,3 @@ wss.on('connection',(ws: ExtWebSocket)=>{
         }
     })
 })
-
-app.listen(3000);
