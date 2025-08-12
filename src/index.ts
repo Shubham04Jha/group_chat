@@ -1,8 +1,11 @@
 import { WebSocket, WebSocketServer } from "ws";
 import {type Request, type Response} from 'express';
 import express from "express";
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors());
 
 interface ExtWebSocket extends WebSocket{
     isAuth: boolean;
@@ -33,8 +36,25 @@ app.get('/api/v1/makeRoom',(req: Request, res: Response): void =>{
     res.json({id,code});
 })
 
+app.post('/api/v1/checkRoom',(req:Request,res:Response): void =>{
+    const {id,code} = req.body;
+    if(!id || !code){
+        res.status(400).json({message:'id and code required',proceed: false});
+        return;
+    }
+    if(!SocketMap.has(id)){
+        res.status(404).json({message: 'room does not exists',proceed: false});
+        return;
+    }
+    if(passwordCheck.get(id)!=code){
+        res.status(403).json({message:'wrong code',proceed: false});
+        return;
+    }
+    res.status(200).json({message:'success',proceed:true});
+})
 
-const server = app.listen(3000);
+
+const server = app.listen(8080);
 const wss = new WebSocketServer({server});
 
 const verifyCredentials = (id: string|null, code: string|null): boolean =>{
@@ -91,3 +111,4 @@ wss.on('connection',(ws: ExtWebSocket)=>{
         }
     })
 })
+
