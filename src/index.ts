@@ -34,7 +34,7 @@ app.get('/api/v1/makeRoom',(req: Request, res: Response): void =>{
     const code = generateCode(6);
     passwordCheck.set(id,code);
     SocketMap.set(id,new Set());
-    res.json({id,code});
+    res.status(200).json({id,code});
 })
 
 app.post('/api/v1/checkRoom',(req:Request,res:Response): void =>{
